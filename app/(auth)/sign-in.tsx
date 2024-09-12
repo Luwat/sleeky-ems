@@ -19,7 +19,7 @@ const SignIn = () => {
   }
 
   return (
-    <SafeAreaView className="h-screen bg-neutral-900">
+    <SafeAreaView className="h-full bg-neutral-900">
       <ScrollView>
         <View className="w-full h-full justify-center px-4 my-6">
           <View>
