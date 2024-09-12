@@ -6,6 +6,7 @@ interface FormInputGroups {
   title: string;
   value: string;
   placeholder: string;
+  placeholderTextColor?: string;
   handleChangeText: (event: string) => void;
 }
 
@@ -15,6 +16,7 @@ const FormField = ({
   title,
   value,
   placeholder,
+  placeholderTextColor = "#fafafa",
   handleChangeText,
   ...props
 }: CustomInputGroups) => {
@@ -29,7 +31,7 @@ const FormField = ({
           <TextInput
             value={value}
             placeholder={placeholder}
-            placeholderTextColor={"#fafafa"}
+            placeholderTextColor={placeholderTextColor}
             onChangeText={handleChangeText}
             className="flex-1 pl-2 text-xl text-neutral-50"
             secureTextEntry={title === password && !showPassword}
