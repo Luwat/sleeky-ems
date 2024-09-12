@@ -49,7 +49,7 @@ const SignIn = () => {
           </View>
         </View>
       </ScrollView>
-      <StatusBar style="dark"/>
+      <StatusBar style="auto"/>
     </SafeAreaView>
   );
 };
