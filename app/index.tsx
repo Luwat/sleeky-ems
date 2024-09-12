@@ -1,14 +1,22 @@
-import { Link } from "expo-router";
+import CustomButton from "@/components/auth/CustomButton";
+import { router, Redirect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Page() {
   return (
-    <View style={styles.container}>
-      <Text>Welcome to Sleeky Programmers</Text>
-      <Link href="/employees">Go to employees page</Link>
-      <StatusBar style="auto"/>
-    </View>
+    <SafeAreaView className="bg-neutral-900 h-full">
+      <ScrollView contentContainerStyle={{ height: "100%" }}>
+        <View className="justify-center items-center w-full h-full px-4">
+          <Text className="text-3xl font-semibold text-center text-neutral-100">
+            Welcome to Sleeky Programmers
+          </Text>
+          <CustomButton title="Sign in to continue" containerStyles="mt-7 w-full" handlePress={() => router.push('/(auth)/sign-in')} />
+        </View>
+      </ScrollView>
+      <StatusBar style="auto" />
+    </SafeAreaView>
   );
 }
 
