@@ -6,7 +6,7 @@ interface FormInputGroups {
   title: string;
   value: string;
   placeholder: string;
-  handleChangeText: (e: string) => void;
+  handleChangeText: (event: string) => void;
 }
 
 type CustomInputGroups = TextInputProps & FormInputGroups;

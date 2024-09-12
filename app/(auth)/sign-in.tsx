@@ -29,8 +29,8 @@ const SignIn = () => {
             title="Email"
             placeholder="Enter email"
             value={form.email}
-            handleChangeText={(e: string) => {
-              setForm({ ...form, email: e });
+            handleChangeText={(email: string) => {
+              setForm({ ...form, email });
             }}
             keyboardType="email-address"
           />
@@ -38,8 +38,8 @@ const SignIn = () => {
             title="Password"
             placeholder="Enter password"
             value={form.password}
-            handleChangeText={(e: string) => {
-              setForm({ ...form, password: e });
+            handleChangeText={(password: string) => {
+              setForm({ ...form, password });
             }}
           />
 

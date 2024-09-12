@@ -8,6 +8,7 @@ import { Link, router } from "expo-router";
 
 const SignUp = () => {
   const [form, setForm] = useState({
+    username: "",
     email: "",
     password: "",
   });
@@ -26,9 +27,9 @@ const SignUp = () => {
           <FormField
             title="Username"
             placeholder="Enter username"
-            value={form.email}
-            handleChangeText={(e: string) => {
-              setForm({ ...form, email: e });
+            value={form.username}
+            handleChangeText={(username: string) => {
+              setForm({ ...form, username });
             }}
             keyboardType="default"
           />
@@ -36,8 +37,8 @@ const SignUp = () => {
             title="Email"
             placeholder="Enter email"
             value={form.email}
-            handleChangeText={(e: string) => {
-              setForm({ ...form, email: e });
+            handleChangeText={(email: string) => {
+              setForm({ ...form, email });
             }}
             keyboardType="email-address"
           />
@@ -45,8 +46,8 @@ const SignUp = () => {
             title="Password"
             placeholder="Enter password"
             value={form.password}
-            handleChangeText={(e: string) => {
-              setForm({ ...form, password: e });
+            handleChangeText={(password: string) => {
+              setForm({ ...form, password });
             }}
           />
 
