@@ -12,7 +12,7 @@ export default function Page() {
           <Text className="text-3xl font-semibold text-center text-neutral-100">
             Welcome to Sleeky Programmers
           </Text>
-          <CustomButton title="Sign in to continue" handlePress={() => router.push('/(auth)/sign-in')} />
+          <CustomButton title="Sign in to continue" containerStyles="mt-7 w-full" handlePress={() => router.push('/(auth)/sign-in')} />
         </View>
       </ScrollView>
       <StatusBar style="auto" />
