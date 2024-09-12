@@ -19,6 +19,7 @@ const FormField = ({
   ...props
 }: CustomInputGroups) => {
   const [showPassword, setShowPassword] = useState(false)
+  const password = "Password";
 
   return (
     <>
@@ -31,10 +32,10 @@ const FormField = ({
             placeholderTextColor={"#fafafa"}
             onChangeText={handleChangeText}
             className="flex-1 pl-2 text-xl text-neutral-50"
-            secureTextEntry={title === "Password" && !showPassword}
+            secureTextEntry={title === password && !showPassword}
             {...props}
           />
-          {title === "Password" && (
+          {title === password && (
             <TouchableOpacity
               className="flex items-center justify-center mr-2"
               onPress={() => setShowPassword(!showPassword)}
