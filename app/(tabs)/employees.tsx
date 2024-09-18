@@ -1,14 +1,28 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import Employee from "@/components/employees/Employee";
+import EmployeesListHeader from "@/components/employees/EmployeesListHeader";
+import NoEmployee from "@/components/employees/NoEmployee";
+import { EMPLOYEES } from "@/lib/constants";
+import { FlatList } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const EmployeesPage = () => {
   return (
-    <View>
-      <Text>Welcome to employees page</Text>
-    </View>
-  )
-}
+    <SafeAreaView className="h-full w-full bg-neutral-950 p-4">
+      <FlatList
+        data={EMPLOYEES}
+        keyExtractor={(employee) => employee.id}
+        renderItem={(employee) => (
+          <Employee
+            firstName={employee.item.firstName}
+            lastName={employee.item.lastName}
+            position={employee.item.position}
+          />
+        )}
+        ListHeaderComponent={() => <EmployeesListHeader />}
+        ListEmptyComponent={() => <NoEmployee />}
+      />
+    </SafeAreaView>
+  );
+};
 
-export default EmployeesPage
-
-const styles = StyleSheet.create({})
+export default EmployeesPage;
