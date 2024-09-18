@@ -1,0 +1,1 @@
+export const BASE_URL = "https://employee-management-api-xj3a.onrender.com"
