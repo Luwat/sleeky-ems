@@ -2,7 +2,7 @@ import { EmployeesData } from "./definitions";
 
 export const EMPLOYEES: EmployeesData[] = [
   {
-    id: Math.random() * 0.5,
+    id: (Math.random() * 0.5).toString(),
     firstName: "Oluwatobi",
     lastName: "Oreniyi",
     email: "oluwatobioreniyi@gmail.com",
@@ -21,7 +21,7 @@ export const EMPLOYEES: EmployeesData[] = [
     educationLevel: "Graduate University",
   },
   {
-    id: Math.random() * 0.5,
+    id: (Math.random() * 0.5).toString(),
     firstName: "Oluwatobi",
     lastName: "Oreniyi",
     email: "oluwatobioreniyi@gmail.com",
@@ -40,7 +40,7 @@ export const EMPLOYEES: EmployeesData[] = [
     educationLevel: "Graduate University",
   },
   {
-    id: Math.random() * 0.5,
+    id: (Math.random() * 0.5).toString(),
     firstName: "Oluwatobi",
     lastName: "Oreniyi",
     email: "oluwatobioreniyi@gmail.com",

@@ -9,7 +9,7 @@ const EmployeesPage = () => {
     <SafeAreaView className="h-full w-full bg-neutral-950 p-4">
       <FlatList
         data={EMPLOYEES}
-        keyExtractor={(employee) => employee.id.toString()}
+        keyExtractor={(employee) => employee.id}
         renderItem={(employee) => (
           <Employee
             firstName={employee.item.firstName}
