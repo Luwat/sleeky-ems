@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 import { BASE_URL } from "@/lib/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import AuthError from "@/components/auth/Error";
 
 const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +19,23 @@ const SignIn = () => {
 
   const submit = async () => {
     setIsLoading(true);
+
     try {
+      if (!form.email || !form.password) {
+        setError("All fields are required");
+        return;
+      }
+
+      if (form.password.length < 8) {
+        setError("Password must be at least 8 characters long");
+        return;
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+        setError("Invalid email address");
+        return;
+      }
+
       const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
@@ -26,13 +43,18 @@ const SignIn = () => {
         },
         body: JSON.stringify(form),
       });
+
       const data = await response.json();
+
       if (data.error) {
         if (Array.isArray(data.message)) {
           setError(data.message[0]);
           return;
         }
         setError(data.message);
+        return;
+      } else if (data.message === "Unauthorized") {
+        setError((data.message = "Employer not authorized"));
         return;
       }
 
@@ -54,17 +76,7 @@ const SignIn = () => {
               Log in to view employees data
             </Text>
           </View>
-          {error && (
-            <View>
-              <Text
-                className={`text-neutral-500 text-center text-lg ${
-                  error && "text-red-500"
-                }`}
-              >
-                {error}
-              </Text>
-            </View>
-          )}
+          {error && <AuthError error={error} />}
           <FormField
             title="Email"
             placeholder="Enter email"
@@ -87,6 +99,7 @@ const SignIn = () => {
             title={isLoading ? "Loading..." : "Sign in"}
             handlePress={submit}
             containerStyles="mt-7 w-full"
+            isLoading={isLoading}
           />
           <View>
             <Text className="text-neutral-500 text-center text-lg mt-3">
