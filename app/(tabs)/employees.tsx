@@ -1,5 +1,6 @@
 import Employee from "@/components/employees/Employee";
 import EmployeesListHeader from "@/components/employees/EmployeesListHeader";
+import NoEmployee from "@/components/employees/NoEmployee";
 import { EMPLOYEES } from "@/lib/constants";
 import { FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -18,6 +19,7 @@ const EmployeesPage = () => {
           />
         )}
         ListHeaderComponent={() => <EmployeesListHeader />}
+        ListEmptyComponent={() => <NoEmployee />}
       />
     </SafeAreaView>
   );
