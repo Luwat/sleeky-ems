@@ -1,5 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { useState } from "react";
+import { useState } from "react";
 import { View, Text, TextInput, TextInputProps, TouchableOpacity } from "react-native";
 
 interface FormInputGroups {
@@ -24,7 +24,6 @@ const FormField = ({
   const password = "Password";
 
   return (
-    <>
       <View className="space-y-2 mt-7">
         <Text className="text-base text-neutral-100">{title}</Text>
         <View className="w-full border-neutral-600 border-2 focus:border-neutral-400 justify-center h-16 my-4 rounded-2xl bg-neutral-700 flex-row">
@@ -51,7 +50,6 @@ const FormField = ({
           )}
         </View>
       </View>
-    </>
   );
 };
 
