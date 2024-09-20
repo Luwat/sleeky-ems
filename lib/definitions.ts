@@ -1,19 +1,25 @@
 export type EmployeesData = {
-    id: string;
+    _id?: string;
     firstName: string;
     lastName: string;
-    email: string;
-    address: string;
+    gender: Gender;
+    emailAddress: string;
+    physicalAddress: string;
     phoneNumber: string;
     emergencyPhoneNumber: string;
     bankName: string;
     bankAccountNumber: string;
-    bankAccountName: string;
-    nextOfKin: string;
-    nextOfKinNumber: string;
+    accountName: string;
+    nextOfKinFullName: string;
+    nextOfKinPhoneNumber: string;
     nextOfKinRelationship: string;
-    position: string;
-    startDate: string;
+    employmentRole: string;
+    employmentStartDate: string;
     dateOfBirth: string;
-    educationLevel: string;
+    educationalLevel: string;
   };
+
+  export const enum Gender  {
+    MALE = "MALE",
+    FEMALE =  "FEMALE",
+  }

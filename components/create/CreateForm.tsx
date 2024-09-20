@@ -4,33 +4,38 @@ import InputField from "./InputField";
 import { BASE_URL } from "@/lib/config";
 import CustomButton from "../auth/CustomButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { EmployeesData, Gender } from "@/lib/definitions";
+import Radio from "./Radio";
 
 const CreateForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const [formData, setFormData] = useState({
+  const [gender, setGender] = useState("")
+  const [formData, setFormData] = useState<EmployeesData>({
     firstName: "",
     lastName: "",
-    email: "",
-    address: "",
+    gender: Gender.MALE,
+    emailAddress: "",
+    physicalAddress: "",
     phoneNumber: "",
     emergencyPhoneNumber: "",
     bankName: "",
     bankAccountNumber: "",
-    bankAccountName: "",
-    nextOfKin: "",
-    nextOfKinNumber: "",
+    accountName: "",
+    nextOfKinFullName: "",
+    nextOfKinPhoneNumber: "",
     nextOfKinRelationship: "",
-    position: "",
-    startDate: "",
+    employmentRole: "",
+    employmentStartDate: "",
     dateOfBirth: "",
-    educationLevel: "",
+    educationalLevel: "",
   });
 
   const submit = async () => {
     setIsLoading(true);
 
     try {
+      console.log(formData)
       const value = await AsyncStorage.getItem('accessToken') 
       const response = await fetch(`${BASE_URL}/employees`, {
         method: "POST",
@@ -47,6 +52,7 @@ const CreateForm = () => {
       
       if (data.message) {
         console.log(data.message);
+        console.log(data.error);
         setError(data.message);
         return;
       }
@@ -84,20 +90,35 @@ const CreateForm = () => {
             setFormData({ ...formData, lastName })
           }
         />
+        {/* <InputField
+          title="Gender"
+          value={formData.gender}
+          placeholder="Enter last name"
+          handleChangeText={(gender: Gender) =>
+            setFormData({ ...formData, gender })
+          }
+        /> */}
+        <Radio options={[
+          {label: Gender.MALE, value: Gender.MALE },
+          {label: Gender.FEMALE, value: Gender.FEMALE },
+        ]}
+        checkedValue={gender}
+        onChange={setGender}
+        />
         <InputField
           title="Email"
-          value={formData.email}
+          value={formData.emailAddress}
           placeholder="Enter email"
-          handleChangeText={(email: string) =>
-            setFormData({ ...formData, email })
+          handleChangeText={(emailAddress: string) =>
+            setFormData({ ...formData, emailAddress })
           }
         />
         <InputField
           title="Address"
-          value={formData.address}
+          value={formData.physicalAddress}
           placeholder="Enter address"
-          handleChangeText={(address: string) =>
-            setFormData({ ...formData, address })
+          handleChangeText={(physicalAddress: string) =>
+            setFormData({ ...formData, physicalAddress })
           }
         />
         <InputField
@@ -134,26 +155,26 @@ const CreateForm = () => {
         />
         <InputField
           title="Bank account name"
-          value={formData.bankAccountName}
+          value={formData.accountName}
           placeholder="Enter bank account name"
-          handleChangeText={(bankAccountName: string) =>
-            setFormData({ ...formData, bankAccountName })
+          handleChangeText={(accountName: string) =>
+            setFormData({ ...formData, accountName })
           }
         />
         <InputField
           title="Next of kin"
-          value={formData.nextOfKin}
+          value={formData.nextOfKinFullName}
           placeholder="Enter next of kine"
-          handleChangeText={(nextOfKin: string) =>
-            setFormData({ ...formData, nextOfKin })
+          handleChangeText={(nextOfKinFullName: string) =>
+            setFormData({ ...formData, nextOfKinFullName })
           }
         />
         <InputField
           title="Next of kin number"
-          value={formData.nextOfKinNumber}
+          value={formData.nextOfKinPhoneNumber}
           placeholder="Enter next of kin number"
-          handleChangeText={(nextOfKinNumber: string) =>
-            setFormData({ ...formData, nextOfKinNumber })
+          handleChangeText={(nextOfKinPhoneNumber: string) =>
+            setFormData({ ...formData, nextOfKinPhoneNumber })
           }
         />
         <InputField
@@ -166,18 +187,18 @@ const CreateForm = () => {
         />
         <InputField
           title="Position"
-          value={formData.position}
+          value={formData.employmentRole}
           placeholder="Enter position"
-          handleChangeText={(position: string) =>
-            setFormData({ ...formData, position })
+          handleChangeText={(employmentRole: string) =>
+            setFormData({ ...formData, employmentRole })
           }
         />
         <InputField
           title="Start date"
-          value={formData.startDate}
+          value={formData.employmentStartDate}
           placeholder="Enter start date"
-          handleChangeText={(startDate: string) =>
-            setFormData({ ...formData, startDate })
+          handleChangeText={(employmentStartDate: string) =>
+            setFormData({ ...formData, employmentStartDate })
           }
         />
         <InputField
@@ -190,13 +211,13 @@ const CreateForm = () => {
         />
         <InputField
           title="Education level"
-          value={formData.educationLevel}
+          value={formData.educationalLevel}
           placeholder="Enter education level"
-          handleChangeText={(educationLevel: string) =>
-            setFormData({ ...formData, educationLevel })
+          handleChangeText={(educationalLevel: string) =>
+            setFormData({ ...formData, educationalLevel })
           }
         />
-        <CustomButton title="Add employee" handlePress={submit} containerStyles="" isLoading={isLoading}/>
+        <CustomButton title={isLoading ? "Loading..." : "Add employee"} handlePress={submit} containerStyles="" isLoading={isLoading}/>
       </ScrollView>
     </View>
   );
