@@ -6,11 +6,33 @@ import CustomButton from "../auth/CustomButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EmployeesData, Gender } from "@/lib/definitions";
 import Radio from "./Radio";
+import NumberField from "./NumberField";
+import { z } from "zod";
+
+const formSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  gender: z.string(),
+  emailAddress: z.string().email(),
+  physicalAddress: z.string(),
+  phoneNumber: z.string(),
+  emergencyPhoneNumber: z.string(),
+  bankName: z.string(),
+  bankAccountNumber: z.number(),
+  accountName: z.string(),
+  nextOfKinFullName: z.string(),
+  nextOfKinPhoneNumber: z.string(),
+  nextOfKinRelationship: z.string(),
+  employmentRole: z.string(),
+  employmentStartDate: z.string(),
+  dateOfBirth: z.string(),
+  educationalLevel: z.string(),
+});
 
 const CreateForm = () => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [gender, setGender] = useState("")
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [gender, setGender] = useState("");
   const [formData, setFormData] = useState<EmployeesData>({
     firstName: "",
     lastName: "",
@@ -20,7 +42,7 @@ const CreateForm = () => {
     phoneNumber: "",
     emergencyPhoneNumber: "",
     bankName: "",
-    bankAccountNumber: "",
+    bankAccountNumber: 0,
     accountName: "",
     nextOfKinFullName: "",
     nextOfKinPhoneNumber: "",
@@ -35,34 +57,52 @@ const CreateForm = () => {
     setIsLoading(true);
 
     try {
-      console.log(formData)
-      const value = await AsyncStorage.getItem('accessToken') 
+      console.log(formData);
+      const parsedFormData = formSchema.parse(formData);
+      const value = await AsyncStorage.getItem("accessToken");
       const response = await fetch(`${BASE_URL}/employees`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${value}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(parsedFormData),
       });
       if (value) {
-        console.log(value)
-      } 
+        console.log(value);
+      }
       const data = await response.json();
-      
+
       if (data.message) {
-        console.log(data.message);
-        console.log(data.error);
         setError(data.message);
         return;
       }
 
-      console.log(data);
+      setFormData({
+        firstName: "",
+        lastName: "",
+        gender: Gender.MALE,
+        emailAddress: "",
+        physicalAddress: "",
+        phoneNumber: "",
+        emergencyPhoneNumber: "",
+        bankName: "",
+        bankAccountNumber: 0,
+        accountName: "",
+        nextOfKinFullName: "",
+        nextOfKinPhoneNumber: "",
+        nextOfKinRelationship: "",
+        employmentRole: "",
+        employmentStartDate: "",
+        dateOfBirth: "",
+        educationalLevel: "",
+      });
 
+      console.log(data);
     } catch (error) {
       console.log(error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -90,20 +130,13 @@ const CreateForm = () => {
             setFormData({ ...formData, lastName })
           }
         />
-        {/* <InputField
-          title="Gender"
-          value={formData.gender}
-          placeholder="Enter last name"
-          handleChangeText={(gender: Gender) =>
-            setFormData({ ...formData, gender })
-          }
-        /> */}
-        <Radio options={[
-          {label: Gender.MALE, value: Gender.MALE },
-          {label: Gender.FEMALE, value: Gender.FEMALE },
-        ]}
-        checkedValue={gender}
-        onChange={setGender}
+        <Radio
+          options={[
+            { label: Gender.MALE, value: Gender.MALE },
+            { label: Gender.FEMALE, value: Gender.FEMALE },
+          ]}
+          checkedValue={gender}
+          onChange={setGender}
         />
         <InputField
           title="Email"
@@ -145,11 +178,11 @@ const CreateForm = () => {
             setFormData({ ...formData, bankName })
           }
         />
-        <InputField
+        <NumberField
           title="Bank account number"
           value={formData.bankAccountNumber}
           placeholder="Enter bank account number"
-          handleChangeText={(bankAccountNumber: string) =>
+          handleChangeText={(bankAccountNumber: number) =>
             setFormData({ ...formData, bankAccountNumber })
           }
         />
@@ -217,7 +250,12 @@ const CreateForm = () => {
             setFormData({ ...formData, educationalLevel })
           }
         />
-        <CustomButton title={isLoading ? "Loading..." : "Add employee"} handlePress={submit} containerStyles="" isLoading={isLoading}/>
+        <CustomButton
+          title={isLoading ? "Loading..." : "Add employee"}
+          handlePress={submit}
+          containerStyles=""
+          isLoading={isLoading}
+        />
       </ScrollView>
     </View>
   );

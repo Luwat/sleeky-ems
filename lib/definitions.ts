@@ -8,7 +8,7 @@ export type EmployeesData = {
     phoneNumber: string;
     emergencyPhoneNumber: string;
     bankName: string;
-    bankAccountNumber: string;
+    bankAccountNumber: number;
     accountName: string;
     nextOfKinFullName: string;
     nextOfKinPhoneNumber: string;
