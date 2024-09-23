@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 import { BASE_URL } from "@/lib/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AuthError from "@/components/auth/Error";
+import Error from "@/components/Error";
 
 const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +61,7 @@ const SignUp = () => {
       await AsyncStorage.setItem("accessToken", data.accessToken);
       router.push("/employees");
     } catch (error: any) {
-      throw new Error(error.message);
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -76,7 +76,7 @@ const SignUp = () => {
               Join Sleeky Programmers
             </Text>
           </View>
-          {error && <AuthError error={error} />}
+          {error && <Error error={error} />}
           <FormField
             title="Email"
             placeholder="Enter email"

@@ -34,6 +34,7 @@ const CreateForm = () => {
   const [error, setError] = useState("");
   const [gender, setGender] = useState("");
   const [formData, setFormData] = useState<EmployeesData>({
+    _id: "",
     firstName: "",
     lastName: "",
     gender: Gender.MALE,
@@ -55,7 +56,6 @@ const CreateForm = () => {
 
   const submit = async () => {
     setIsLoading(true);
-
     try {
       console.log(formData);
       const parsedFormData = formSchema.parse(formData);
@@ -68,35 +68,13 @@ const CreateForm = () => {
         },
         body: JSON.stringify(parsedFormData),
       });
-      if (value) {
-        console.log(value);
-      }
+      
       const data = await response.json();
-
+      
       if (data.message) {
         setError(data.message);
         return;
       }
-
-      setFormData({
-        firstName: "",
-        lastName: "",
-        gender: Gender.MALE,
-        emailAddress: "",
-        physicalAddress: "",
-        phoneNumber: "",
-        emergencyPhoneNumber: "",
-        bankName: "",
-        bankAccountNumber: 0,
-        accountName: "",
-        nextOfKinFullName: "",
-        nextOfKinPhoneNumber: "",
-        nextOfKinRelationship: "",
-        employmentRole: "",
-        employmentStartDate: "",
-        dateOfBirth: "",
-        educationalLevel: "",
-      });
 
       console.log(data);
     } catch (error) {
