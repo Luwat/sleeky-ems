@@ -1,14 +1,17 @@
 import { View, Text, ScrollView } from "react-native";
-import { useState } from "react";
-import InputField from "./InputField";
+import { useEffect, useState } from "react";
+import InputField from "@/components/create/InputField";
 import { BASE_URL } from "@/lib/config";
 import CustomButton from "../auth/CustomButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EmployeesData, Gender } from "@/lib/definitions";
-import Radio from "./Radio";
-import NumberField from "./NumberField";
+import Radio from "@/components/create/Radio";
+import NumberField from "@/components/create/NumberField";
 import { z } from "zod";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import EditInput from "./EditInput";
+import EditNumberField from "./EditNumberField";
+import EditButton from "./EditButton";
 
 const formSchema = z.object({
   firstName: z.string(),
@@ -30,39 +33,41 @@ const formSchema = z.object({
   educationalLevel: z.string(),
 });
 
-const CreateForm = () => {
+const EditForm = ({employee}: {employee: EmployeesData}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [gender, setGender] = useState("");
   const [formData, setFormData] = useState<EmployeesData>({
-    _id: "",
-    firstName: "",
-    lastName: "",
-    gender: Gender.MALE,
-    emailAddress: "",
-    physicalAddress: "",
-    phoneNumber: "",
-    emergencyPhoneNumber: "",
-    bankName: "",
-    bankAccountNumber: 0,
-    accountName: "",
-    nextOfKinFullName: "",
-    nextOfKinPhoneNumber: "",
-    nextOfKinRelationship: "",
-    employmentRole: "",
-    employmentStartDate: "",
-    dateOfBirth: "",
-    educationalLevel: "",
+    _id: employee._id,
+    firstName: employee.firstName,
+    lastName: employee.lastName,
+    gender: employee.gender,
+    emailAddress: employee.emailAddress,
+    physicalAddress: employee.physicalAddress,
+    phoneNumber: employee.phoneNumber,
+    emergencyPhoneNumber: employee.emergencyPhoneNumber,
+    bankName: employee.bankName,
+    bankAccountNumber: employee.bankAccountNumber,
+    accountName: employee.accountName,
+    nextOfKinFullName: employee.nextOfKinFullName,
+    nextOfKinPhoneNumber: employee.nextOfKinPhoneNumber,
+    nextOfKinRelationship: employee.nextOfKinRelationship,
+    employmentRole: employee.employmentRole,
+    employmentStartDate: employee.employmentStartDate,
+    dateOfBirth: employee.dateOfBirth,
+    educationalLevel: employee.educationalLevel,
   });
 
-  const submit = async () => {
+
+
+  const submit = async (id: string) => {
     setIsLoading(true);
     try {
-      console.log(formData);
+
       const parsedFormData = formSchema.parse(formData);
       const value = await AsyncStorage.getItem("accessToken");
-      const response = await fetch(`${BASE_URL}/employees`, {
-        method: "POST",
+      const response = await fetch(`${BASE_URL}/employees/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${value}`,
@@ -76,7 +81,11 @@ const CreateForm = () => {
         setError(data.message);
         return;
       }
+
+      setFormData(data);
       router.push('/employees')
+
+      console.log(data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -92,21 +101,23 @@ const CreateForm = () => {
         </Text>
       </View>
       <ScrollView className="px-6 bg-neutral-800">
-        <InputField
+        <EditInput
           title="First name"
           value={formData.firstName}
           placeholder="Enter first name"
+          defaultValue={employee.firstName}
           handleChangeText={(firstName: string) =>
-            setFormData({ ...formData, firstName })
-          }
+            setFormData({...formData, firstName })
+          } 
         />
-        <InputField
+        <EditInput
           title="Last name"
-          value={formData.lastName}
+          value={employee.lastName}
           placeholder="Enter last name"
+          defaultValue={employee.lastName}
           handleChangeText={(lastName: string) =>
-            setFormData({ ...formData, lastName })
-          }
+            setFormData({...formData, lastName })}
+     
         />
         <Radio
           options={[
@@ -116,121 +127,135 @@ const CreateForm = () => {
           checkedValue={gender}
           onChange={setGender}
         />
-        <InputField
+        <EditInput
           title="Email"
           value={formData.emailAddress}
           placeholder="Enter email"
-          handleChangeText={(emailAddress: string) =>
-            setFormData({ ...formData, emailAddress })
+          defaultValue={employee.emailAddress}
+          handleChangeText={(emailAddress: string) => 
+            setFormData({...formData, emailAddress })
           }
         />
-        <InputField
+        <EditInput
           title="Address"
           value={formData.physicalAddress}
           placeholder="Enter address"
+          defaultValue={employee.physicalAddress}
           handleChangeText={(physicalAddress: string) =>
-            setFormData({ ...formData, physicalAddress })
+            setFormData({...formData, physicalAddress })
           }
         />
-        <InputField
+        <EditInput
           title="Phone number"
           value={formData.phoneNumber}
           placeholder="Enter phone number"
-          handleChangeText={(phoneNumber: string) =>
-            setFormData({ ...formData, phoneNumber })
+          defaultValue={employee.phoneNumber}
+          handleChangeText={(phoneNumber: string) => 
+            setFormData({...formData, phoneNumber })
           }
         />
-        <InputField
+        <EditInput
           title="Emergency phone number"
           value={formData.emergencyPhoneNumber}
           placeholder="Enter emergency phone number"
+          defaultValue={employee.emergencyPhoneNumber}
           handleChangeText={(emergencyPhoneNumber: string) =>
-            setFormData({ ...formData, emergencyPhoneNumber })
+            setFormData({...formData, emergencyPhoneNumber })
           }
         />
-        <InputField
+        <EditInput
           title="Bank name"
           value={formData.bankName}
           placeholder="Enter bank name"
+          defaultValue={employee.bankName}
           handleChangeText={(bankName: string) =>
-            setFormData({ ...formData, bankName })
+            setFormData({...formData, bankName })
           }
         />
-        <NumberField
+        <EditNumberField
           title="Bank account number"
           value={formData.bankAccountNumber}
           placeholder="Enter bank account number"
+          defaultValue={employee.bankAccountNumber}
           handleChangeText={(bankAccountNumber: number) =>
-            setFormData({ ...formData, bankAccountNumber })
+            setFormData({...formData, bankAccountNumber })
           }
         />
-        <InputField
+        <EditInput
           title="Bank account name"
           value={formData.accountName}
           placeholder="Enter bank account name"
+          defaultValue={employee.accountName}
           handleChangeText={(accountName: string) =>
-            setFormData({ ...formData, accountName })
+            setFormData({...formData, accountName })
           }
         />
-        <InputField
+        <EditInput
           title="Next of kin"
           value={formData.nextOfKinFullName}
           placeholder="Enter next of kine"
+          defaultValue={employee.nextOfKinFullName}
           handleChangeText={(nextOfKinFullName: string) =>
-            setFormData({ ...formData, nextOfKinFullName })
+            setFormData({...formData, nextOfKinFullName })
           }
         />
-        <InputField
+        <EditInput
           title="Next of kin number"
           value={formData.nextOfKinPhoneNumber}
           placeholder="Enter next of kin number"
-          handleChangeText={(nextOfKinPhoneNumber: string) =>
-            setFormData({ ...formData, nextOfKinPhoneNumber })
+          defaultValue={employee.nextOfKinPhoneNumber}
+          handleChangeText={(nextOfKinPhoneNumber) => 
+            setFormData({...formData, nextOfKinPhoneNumber })
           }
         />
-        <InputField
+        <EditInput
           title="Next of kin relationship"
           value={formData.nextOfKinRelationship}
           placeholder="Enter next of kin relationship"
-          handleChangeText={(nextOfKinRelationship: string) =>
-            setFormData({ ...formData, nextOfKinRelationship })
+          defaultValue={employee.nextOfKinRelationship}
+          handleChangeText={(nextOfKinRelationship: string) => 
+            setFormData({...formData, nextOfKinRelationship })
           }
         />
-        <InputField
+        <EditInput
           title="Position"
           value={formData.employmentRole}
           placeholder="Enter position"
+          defaultValue={employee.employmentRole}
           handleChangeText={(employmentRole: string) =>
-            setFormData({ ...formData, employmentRole })
+            setFormData({...formData, employmentRole })
           }
         />
-        <InputField
+        <EditInput
           title="Start date"
           value={formData.employmentStartDate}
           placeholder="Enter start date"
+          defaultValue={employee.employmentStartDate}
           handleChangeText={(employmentStartDate: string) =>
-            setFormData({ ...formData, employmentStartDate })
+            setFormData({...formData, employmentStartDate })
           }
         />
-        <InputField
+        <EditInput
           title="Date of birth"
           value={formData.dateOfBirth}
           placeholder="Enter date of birth"
+          defaultValue={employee.dateOfBirth}
           handleChangeText={(dateOfBirth: string) =>
-            setFormData({ ...formData, dateOfBirth })
+            setFormData({...formData, dateOfBirth })
           }
         />
-        <InputField
+        <EditInput
           title="Education level"
           value={formData.educationalLevel}
           placeholder="Enter education level"
+          defaultValue={employee.educationalLevel}
           handleChangeText={(educationalLevel: string) =>
-            setFormData({ ...formData, educationalLevel })
+            setFormData({...formData, educationalLevel })
           }
         />
-        <CustomButton
-          title={isLoading ? "Loading..." : "Add employee"}
-          handlePress={submit}
+        <EditButton
+          title={isLoading ? "Loading..." : "Edit employee"}
+          handlePress={() => submit(employee._id)}
           containerStyles=""
           isLoading={isLoading}
         />
@@ -239,4 +264,4 @@ const CreateForm = () => {
   );
 };
 
-export default CreateForm;
+export default EditForm;
