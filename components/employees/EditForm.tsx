@@ -1,42 +1,21 @@
 import { View, Text, ScrollView } from "react-native";
-import { useEffect, useState } from "react";
-import InputField from "@/components/create/InputField";
+import { useState } from "react";
 import { BASE_URL } from "@/lib/config";
-import CustomButton from "../auth/CustomButton";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { EmployeesData, Gender } from "@/lib/definitions";
+import { EmployeesData } from "@/lib/definitions";
 import Radio from "@/components/create/Radio";
-import NumberField from "@/components/create/NumberField";
-import { z } from "zod";
-import { router, useLocalSearchParams } from "expo-router";
 import EditInput from "./EditInput";
 import EditNumberField from "./EditNumberField";
 import EditButton from "./EditButton";
+import useSWRMutation from "swr/mutation";
+import { router } from "expo-router";
+import { updateEmployee } from "@/lib/http";
 
-const formSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  gender: z.string(),
-  emailAddress: z.string().email(),
-  physicalAddress: z.string(),
-  phoneNumber: z.string(),
-  emergencyPhoneNumber: z.string(),
-  bankName: z.string(),
-  bankAccountNumber: z.number(),
-  accountName: z.string(),
-  nextOfKinFullName: z.string(),
-  nextOfKinPhoneNumber: z.string(),
-  nextOfKinRelationship: z.string(),
-  employmentRole: z.string(),
-  employmentStartDate: z.string(),
-  dateOfBirth: z.string(),
-  educationalLevel: z.string(),
-});
+const EditForm = ({ employee }: { employee: EmployeesData }) => {
+  const { trigger, data, isMutating } = useSWRMutation(
+    `${BASE_URL}/employees/${employee._id}`,
+    updateEmployee
+  );
 
-const EditForm = ({employee}: {employee: EmployeesData}) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [gender, setGender] = useState("");
   const [formData, setFormData] = useState<EmployeesData>({
     _id: employee._id,
     firstName: employee.firstName,
@@ -58,38 +37,36 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
     educationalLevel: employee.educationalLevel,
   });
 
-
-
-  const submit = async (id: string) => {
-    setIsLoading(true);
+  const submit = async () => {
     try {
-
-      const parsedFormData = formSchema.parse(formData);
-      const value = await AsyncStorage.getItem("accessToken");
-      const response = await fetch(`${BASE_URL}/employees/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${value}`,
-        },
-        body: JSON.stringify(parsedFormData),
+      const result = await trigger({
+        ...data,
+        _id: employee._id,
+        firstName: employee.firstName,
+        lastName: employee.lastName,
+        gender: employee.gender,
+        emailAddress: employee.emailAddress,
+        physicalAddress: employee.physicalAddress,
+        phoneNumber: employee.phoneNumber,
+        emergencyPhoneNumber: employee.emergencyPhoneNumber,
+        bankName: employee.bankName,
+        bankAccountNumber: employee.bankAccountNumber,
+        accountName: employee.accountName,
+        nextOfKinFullName: employee.nextOfKinFullName,
+        nextOfKinPhoneNumber: employee.nextOfKinPhoneNumber,
+        nextOfKinRelationship: employee.nextOfKinRelationship,
+        employmentRole: employee.employmentRole,
+        employmentStartDate: employee.employmentStartDate,
+        dateOfBirth: employee.dateOfBirth,
+        educationalLevel: employee.educationalLevel,
       });
-      
-      const data = await response.json();
-      
-      if (data.message) {
-        setError(data.message);
-        return;
+      if (result) {
+        result
+        router.push('/employees')
       }
-
-      setFormData(data);
-      router.push('/employees')
-
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+      return;
     }
   };
 
@@ -107,8 +84,8 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter first name"
           defaultValue={employee.firstName}
           handleChangeText={(firstName: string) =>
-            setFormData({...formData, firstName })
-          } 
+            setFormData({ ...formData, firstName })
+          }
         />
         <EditInput
           title="Last name"
@@ -116,24 +93,24 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter last name"
           defaultValue={employee.lastName}
           handleChangeText={(lastName: string) =>
-            setFormData({...formData, lastName })}
-     
+            setFormData({ ...formData, lastName })
+          }
         />
         <Radio
           options={[
-            { label: Gender.MALE, value: Gender.MALE },
-            { label: Gender.FEMALE, value: Gender.FEMALE },
+            { label: "MALE", value: "MALE" },
+            { label: "FEMALE", value: "FEMALE" },
           ]}
-          checkedValue={gender}
-          onChange={setGender}
+          checkedValue={formData.gender}
+          onChange={(gender: string) => setFormData({ ...formData, gender })}
         />
         <EditInput
           title="Email"
           value={formData.emailAddress}
           placeholder="Enter email"
           defaultValue={employee.emailAddress}
-          handleChangeText={(emailAddress: string) => 
-            setFormData({...formData, emailAddress })
+          handleChangeText={(emailAddress: string) =>
+            setFormData({ ...formData, emailAddress })
           }
         />
         <EditInput
@@ -142,7 +119,7 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter address"
           defaultValue={employee.physicalAddress}
           handleChangeText={(physicalAddress: string) =>
-            setFormData({...formData, physicalAddress })
+            setFormData({ ...formData, physicalAddress })
           }
         />
         <EditInput
@@ -150,8 +127,8 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           value={formData.phoneNumber}
           placeholder="Enter phone number"
           defaultValue={employee.phoneNumber}
-          handleChangeText={(phoneNumber: string) => 
-            setFormData({...formData, phoneNumber })
+          handleChangeText={(phoneNumber: string) =>
+            setFormData({ ...formData, phoneNumber })
           }
         />
         <EditInput
@@ -160,7 +137,7 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter emergency phone number"
           defaultValue={employee.emergencyPhoneNumber}
           handleChangeText={(emergencyPhoneNumber: string) =>
-            setFormData({...formData, emergencyPhoneNumber })
+            setFormData({ ...formData, emergencyPhoneNumber })
           }
         />
         <EditInput
@@ -169,7 +146,7 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter bank name"
           defaultValue={employee.bankName}
           handleChangeText={(bankName: string) =>
-            setFormData({...formData, bankName })
+            setFormData({ ...formData, bankName })
           }
         />
         <EditNumberField
@@ -178,7 +155,7 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter bank account number"
           defaultValue={employee.bankAccountNumber}
           handleChangeText={(bankAccountNumber: number) =>
-            setFormData({...formData, bankAccountNumber })
+            setFormData({ ...formData, bankAccountNumber })
           }
         />
         <EditInput
@@ -187,7 +164,7 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter bank account name"
           defaultValue={employee.accountName}
           handleChangeText={(accountName: string) =>
-            setFormData({...formData, accountName })
+            setFormData({ ...formData, accountName })
           }
         />
         <EditInput
@@ -196,7 +173,7 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter next of kine"
           defaultValue={employee.nextOfKinFullName}
           handleChangeText={(nextOfKinFullName: string) =>
-            setFormData({...formData, nextOfKinFullName })
+            setFormData({ ...formData, nextOfKinFullName })
           }
         />
         <EditInput
@@ -204,8 +181,8 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           value={formData.nextOfKinPhoneNumber}
           placeholder="Enter next of kin number"
           defaultValue={employee.nextOfKinPhoneNumber}
-          handleChangeText={(nextOfKinPhoneNumber) => 
-            setFormData({...formData, nextOfKinPhoneNumber })
+          handleChangeText={(nextOfKinPhoneNumber) =>
+            setFormData({ ...formData, nextOfKinPhoneNumber })
           }
         />
         <EditInput
@@ -213,8 +190,8 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           value={formData.nextOfKinRelationship}
           placeholder="Enter next of kin relationship"
           defaultValue={employee.nextOfKinRelationship}
-          handleChangeText={(nextOfKinRelationship: string) => 
-            setFormData({...formData, nextOfKinRelationship })
+          handleChangeText={(nextOfKinRelationship: string) =>
+            setFormData({ ...formData, nextOfKinRelationship })
           }
         />
         <EditInput
@@ -223,7 +200,7 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter position"
           defaultValue={employee.employmentRole}
           handleChangeText={(employmentRole: string) =>
-            setFormData({...formData, employmentRole })
+            setFormData({ ...formData, employmentRole })
           }
         />
         <EditInput
@@ -232,7 +209,7 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter start date"
           defaultValue={employee.employmentStartDate}
           handleChangeText={(employmentStartDate: string) =>
-            setFormData({...formData, employmentStartDate })
+            setFormData({ ...formData, employmentStartDate })
           }
         />
         <EditInput
@@ -241,7 +218,7 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter date of birth"
           defaultValue={employee.dateOfBirth}
           handleChangeText={(dateOfBirth: string) =>
-            setFormData({...formData, dateOfBirth })
+            setFormData({ ...formData, dateOfBirth })
           }
         />
         <EditInput
@@ -250,14 +227,14 @@ const EditForm = ({employee}: {employee: EmployeesData}) => {
           placeholder="Enter education level"
           defaultValue={employee.educationalLevel}
           handleChangeText={(educationalLevel: string) =>
-            setFormData({...formData, educationalLevel })
+            setFormData({ ...formData, educationalLevel })
           }
         />
         <EditButton
-          title={isLoading ? "Loading..." : "Edit employee"}
-          handlePress={() => submit(employee._id)}
+          title={isMutating ? "Loading..." : "Edit employee"}
+          handlePress={submit}
           containerStyles=""
-          isLoading={isLoading}
+          isLoading={isMutating}
         />
       </ScrollView>
     </View>

@@ -1,8 +1,8 @@
-export type EmployeesData = {
+export interface EmployeesData  {
     _id: string;
     firstName: string;
     lastName: string;
-    gender: Gender;
+    gender: string;
     emailAddress: string;
     physicalAddress: string;
     phoneNumber: string;
@@ -18,8 +18,3 @@ export type EmployeesData = {
     dateOfBirth: string;
     educationalLevel: string;
   };
-
-  export const enum Gender  {
-    MALE = "MALE",
-    FEMALE =  "FEMALE",
-  }

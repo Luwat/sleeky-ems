@@ -14,7 +14,7 @@ const Radio = ({
 }: {
   options: options[];
   checkedValue: string;
-  onChange: React.Dispatch<React.SetStateAction<string>>;
+  onChange: (event: string) => void;
 }) => {
   return (
     <View className="gap-x-5 p-4 my-5 items-center flex-row bg-neutral-700 rounded-2xl">

@@ -3,42 +3,25 @@ import { useState } from "react";
 import InputField from "./InputField";
 import { BASE_URL } from "@/lib/config";
 import CustomButton from "../auth/CustomButton";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { EmployeesData, Gender } from "@/lib/definitions";
+import { EmployeesData } from "@/lib/definitions";
 import Radio from "./Radio";
 import NumberField from "./NumberField";
-import { z } from "zod";
 import { router } from "expo-router";
+import useSWRMutation from "swr/mutation";
+import { createEmployees } from "@/lib/http";
 
-const formSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  gender: z.string(),
-  emailAddress: z.string().email(),
-  physicalAddress: z.string(),
-  phoneNumber: z.string(),
-  emergencyPhoneNumber: z.string(),
-  bankName: z.string(),
-  bankAccountNumber: z.number(),
-  accountName: z.string(),
-  nextOfKinFullName: z.string(),
-  nextOfKinPhoneNumber: z.string(),
-  nextOfKinRelationship: z.string(),
-  employmentRole: z.string(),
-  employmentStartDate: z.string(),
-  dateOfBirth: z.string(),
-  educationalLevel: z.string(),
-});
 
 const CreateForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [gender, setGender] = useState("");
+  const {
+    data,
+    trigger,
+    isMutating: isLoading,
+  } = useSWRMutation(`${BASE_URL}/employees`, createEmployees);
   const [formData, setFormData] = useState<EmployeesData>({
     _id: "",
     firstName: "",
     lastName: "",
-    gender: Gender.MALE,
+    gender: "",
     emailAddress: "",
     physicalAddress: "",
     phoneNumber: "",
@@ -56,31 +39,35 @@ const CreateForm = () => {
   });
 
   const submit = async () => {
-    setIsLoading(true);
     try {
-      console.log(formData);
-      const parsedFormData = formSchema.parse(formData);
-      const value = await AsyncStorage.getItem("accessToken");
-      const response = await fetch(`${BASE_URL}/employees`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${value}`,
-        },
-        body: JSON.stringify(parsedFormData),
+      const result = await trigger({
+        ...data,
+        _id: formData._id,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        gender: formData.gender,
+        emailAddress: formData.emailAddress,
+        physicalAddress: formData.physicalAddress,
+        phoneNumber: formData.phoneNumber,
+        emergencyPhoneNumber: formData.emergencyPhoneNumber,
+        bankName: formData. bankName,        
+        bankAccountNumber: formData.bankAccountNumber,
+        accountName: formData.accountName,
+        nextOfKinFullName: formData.nextOfKinFullName,
+        nextOfKinPhoneNumber: formData.nextOfKinPhoneNumber,
+        nextOfKinRelationship: formData.nextOfKinRelationship,
+        employmentRole: formData.employmentRole,
+        employmentStartDate:formData.employmentStartDate,
+        dateOfBirth: formData. dateOfBirth,
+        educationalLevel: formData.educationalLevel,
       });
-      
-      const data = await response.json();
-      
-      if (data.message) {
-        setError(data.message);
-        return;
+      if (result) {
+        result
+        router.push('/employees')
       }
-      router.push('/employees')
     } catch (error) {
       console.log(error);
-    } finally {
-      setIsLoading(false);
+      return;
     }
   };
 
@@ -97,7 +84,7 @@ const CreateForm = () => {
           value={formData.firstName}
           placeholder="Enter first name"
           handleChangeText={(firstName: string) =>
-            setFormData({ ...formData, firstName })
+            setFormData({ ...data, firstName })
           }
         />
         <InputField
@@ -110,11 +97,13 @@ const CreateForm = () => {
         />
         <Radio
           options={[
-            { label: Gender.MALE, value: Gender.MALE },
-            { label: Gender.FEMALE, value: Gender.FEMALE },
+            { label: "MALE", value: "MALE" },
+            { label: "FEMALE", value: "FEMALE" },
           ]}
-          checkedValue={gender}
-          onChange={setGender}
+          checkedValue={formData.gender}
+          onChange={(gender: string) => 
+            setFormData({...formData, gender })
+          }
         />
         <InputField
           title="Email"
