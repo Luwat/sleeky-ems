@@ -3,7 +3,7 @@ import { useState } from "react";
 import InputField from "./InputField";
 import { BASE_URL } from "@/lib/config";
 import CustomButton from "../auth/CustomButton";
-import { EmployeesData } from "@/lib/definitions";
+import { EmployeesData, Gender } from "@/lib/definitions";
 import Radio from "./Radio";
 import NumberField from "./NumberField";
 import { router } from "expo-router";
@@ -97,8 +97,8 @@ const CreateForm = () => {
         />
         <Radio
           options={[
-            { label: "MALE", value: "MALE" },
-            { label: "FEMALE", value: "FEMALE" },
+            { label: Gender.Male, value: Gender.Male },
+            { label: Gender.Female, value: Gender.Female },
           ]}
           checkedValue={formData.gender}
           onChange={(gender: string) => 

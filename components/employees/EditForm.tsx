@@ -1,7 +1,7 @@
 import { View, Text, ScrollView } from "react-native";
 import { useState } from "react";
 import { BASE_URL } from "@/lib/config";
-import { EmployeesData } from "@/lib/definitions";
+import { EmployeesData, Gender } from "@/lib/definitions";
 import Radio from "@/components/create/Radio";
 import EditInput from "./EditInput";
 import EditNumberField from "./EditNumberField";
@@ -98,8 +98,8 @@ const EditForm = ({ employee }: { employee: EmployeesData }) => {
         />
         <Radio
           options={[
-            { label: "MALE", value: "MALE" },
-            { label: "FEMALE", value: "FEMALE" },
+            { label: Gender.Male, value: Gender.Male },
+            { label: Gender.Female, value: Gender.Female },
           ]}
           checkedValue={formData.gender}
           onChange={(gender: string) => setFormData({ ...formData, gender })}
