@@ -1,26 +1,42 @@
 import Employee from "@/components/employees/Employee";
 import EmployeesListHeader from "@/components/employees/EmployeesListHeader";
 import NoEmployee from "@/components/employees/NoEmployee";
-import { EMPLOYEES } from "@/lib/constants";
-import { FlatList } from "react-native";
+import Error from "@/components/Error";
+import { BASE_URL } from "@/lib/config";
+import { EmployeesData } from "@/lib/definitions";
+import { fetchEmployees } from "@/lib/http";
+import { FlatList, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useSWR from "swr";
+
 
 const EmployeesPage = () => {
+  const {
+    data: employees,
+    error,
+    isLoading
+  } = useSWR(`${BASE_URL}/employees`, fetchEmployees);
+
   return (
     <SafeAreaView className="h-full w-full bg-neutral-950 p-4">
-      <FlatList
-        data={EMPLOYEES}
-        keyExtractor={(employee) => employee.id}
-        renderItem={(employee) => (
-          <Employee
-            firstName={employee.item.firstName}
-            lastName={employee.item.lastName}
-            position={employee.item.position}
-          />
-        )}
-        ListHeaderComponent={() => <EmployeesListHeader />}
-        ListEmptyComponent={() => <NoEmployee />}
-      />
+      {isLoading && <Text className="text-neutral-100">Loading...</Text>}
+      {error && <Error error={error} />}
+      {employees && (
+        <FlatList
+          data={employees}
+          keyExtractor={(employee: EmployeesData) => employee._id}
+          renderItem={(employee) => (
+            <Employee
+              id={employee.item._id}
+              firstName={employee.item.firstName}
+              lastName={employee.item.lastName}
+              position={employee.item.employmentRole}
+            />
+          )}
+          ListHeaderComponent={() => <EmployeesListHeader />}
+          ListEmptyComponent={() => <NoEmployee />}
+        />
+      )}
     </SafeAreaView>
   );
 };

@@ -1,13 +1,13 @@
 import { TouchableOpacity, Text } from "react-native";
 
-const CustomButton = ({
+const EditButton = ({
   title,
   handlePress,
   containerStyles,
   isLoading
 }: {
   title: string;
-  handlePress: () => void;
+  handlePress: (event: string) => Promise<void>;
   containerStyles: string;
   isLoading?: boolean;
 }) => {
@@ -15,6 +15,7 @@ const CustomButton = ({
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={handlePress}
+      disabled={isLoading}
       className={`justify-center items-center ${isLoading ? 'bg-neutral-500': 'bg-neutral-100' } py-4  rounded-2xl ${containerStyles}`}
     >
       <Text className="text-blue-950 text-2xl">{title}</Text>
@@ -22,4 +23,4 @@ const CustomButton = ({
   );
 };
 
-export default CustomButton;
+export default EditButton;

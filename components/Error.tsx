@@ -1,7 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-const AuthError = ({error}: {error:string}) => {
+const Error = ({error}: {error:string}) => {
   return (
     <View className="mt-4">
       <Text
@@ -15,4 +15,4 @@ const AuthError = ({error}: {error:string}) => {
   );
 };
 
-export default AuthError;
+export default Error;
