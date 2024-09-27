@@ -10,10 +10,8 @@ import Error from "@/components/Error";
 import AuthDecide from "@/components/auth/AuthDecide";
 import useSWRMutation from "swr/mutation";
 import { signUp } from "@/lib/auth";
-import { useGlobalContext } from "@/lib/token";
 
 const SignIn = () => {
-  const {accessToken, isLoggedIn, isLoading} = useGlobalContext()
   const {
     data,
     trigger,
@@ -39,15 +37,15 @@ const SignIn = () => {
     }
 
     if (error) {
-      return null;
+      error;
+      return
     }
   };
 
-  
-  if (isLoggedIn && !isLoading) {
-    console.log(accessToken.get)
-    return <Redirect href={'/employees'}/>
-  }
+  // if (isLoggedIn && !isLoading) {
+  //   console.log(accessToken.get)
+  //   return <Redirect href={'/employees'}/>
+  // }
 
   return (
     <SafeAreaView className="h-full bg-neutral-900">

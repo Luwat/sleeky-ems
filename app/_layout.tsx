@@ -1,11 +1,9 @@
 import { View, Text, AppState } from "react-native";
 import { Stack } from "expo-router";
 import { SWRConfig } from "swr";
-import GlobalContextProvider from "@/lib/token";
 
 const RootLayout = () => {
   return (
-    <GlobalContextProvider>
       <SWRConfig
         value={{
           provider: () => new Map(),
@@ -45,7 +43,6 @@ const RootLayout = () => {
           <Stack.Screen name="[id]" options={{ headerShown: false }} />
         </Stack>
       </SWRConfig>
-    </GlobalContextProvider>
   );
 };
 

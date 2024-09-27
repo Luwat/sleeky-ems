@@ -28,21 +28,3 @@ export interface AuthData {
   email: string;
   password: string;
 }
-
-export interface Token {
-  get?: string | null;
-  remove?: void;
-};
-
-export interface RemoveToken {
-};
-
-export interface tokenProps {
-  isLoading: boolean;
-  isLoggedIn: boolean;
-  accessToken: Token;
-}
-
-export interface IProps {
-  children?: React.ReactNode;
-}

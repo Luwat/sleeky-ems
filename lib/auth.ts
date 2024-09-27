@@ -16,14 +16,14 @@ export const signUp = async (
   const data = await response.json();
 
   if (data.error) {
-    data.message;
-    return;
+     console.log(data.message);
+     return
   } else if (data.message === "Unauthorized") {
-    data.message = "Employer not authorized";
-    return;
+    console.log(data.message = "Employer not authorized");
+    return 
   }
 
-  await AsyncStorage.setItem("accessToken", data.accessToken)
+  await AsyncStorage.setItem("accessToken", data.accessToken);
   return data;
 };
 
@@ -45,10 +45,10 @@ export const login = async (
     console.log(data.message);
     return;
   } else if (data.message === "Unauthorized") {
-    console.log(data.message = "Employer not authorized");
+    console.log((data.message = "Employer not authorized"));
     return;
   }
 
-  await AsyncStorage.setItem("accessToken", data.accessToken)
+  await AsyncStorage.setItem("accessToken", data.accessToken);
   return data;
 };
