@@ -1,10 +1,20 @@
 import CustomButton from "@/components/auth/CustomButton";
+import { BASE_URL } from "@/lib/config";
+import { fetchEmployees } from "@/lib/http";
+import { useGlobalContext } from "@/lib/token";
 import { router, Redirect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useSWR from "swr";
 
 export default function Page() {
+  const {isLoggedIn, isLoading, accessToken} = useGlobalContext()
+
+  if (isLoggedIn && !isLoading) {
+    return <Redirect href={'/employees'}/>
+  }
+
   return (
     <SafeAreaView className="bg-neutral-900 h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>

@@ -4,68 +4,50 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { BASE_URL } from "@/lib/config";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Error from "@/components/Error";
+import AuthDecide from "@/components/auth/AuthDecide";
+import useSWRMutation from "swr/mutation";
+import { signUp } from "@/lib/auth";
+import { useGlobalContext } from "@/lib/token";
 
 const SignIn = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const {accessToken, isLoggedIn, isLoading} = useGlobalContext()
+  const {
+    data,
+    trigger,
+    isMutating,
+    error,
+  } = useSWRMutation(`${BASE_URL}/auth/login`, signUp);
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
   const submit = async () => {
-    setIsLoading(true);
+    const result = await trigger({
+      ...data,
+      email: form.email,
+      password: form.password,
+      isMutating,
+    });
 
-    try {
-      if (!form.email || !form.password) {
-        setError("All fields are required");
-        return;
-      }
+    if (result) {
+      result;
+      router.replace("/employees");
+    }
 
-      if (form.password.length < 8) {
-        setError("Password must be at least 8 characters long");
-        return;
-      }
-
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-        setError("Invalid email address");
-        return;
-      }
-
-      const response = await fetch(`${BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-
-      const data = await response.json();
-
-      if (data.error) {
-        if (Array.isArray(data.message)) {
-          setError(data.message[0]);
-          return;
-        }
-        setError(data.message);
-        return;
-      } else if (data.message === "Unauthorized") {
-        setError((data.message = "Employer not authorized"));
-        return;
-      }
-
-      await AsyncStorage.setItem("accessToken", data.accessToken);
-      router.push("/employees");
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
+    if (error) {
+      return null;
     }
   };
+
+  
+  if (isLoggedIn && !isLoading) {
+    console.log(accessToken.get)
+    return <Redirect href={'/employees'}/>
+  }
 
   return (
     <SafeAreaView className="h-full bg-neutral-900">
@@ -96,19 +78,17 @@ const SignIn = () => {
           />
 
           <CustomButton
-            title={isLoading ? "Loading..." : "Sign in"}
+            title={isMutating ? "Loading..." : "Sign in"}
             handlePress={submit}
             containerStyles="mt-7 w-full"
-            isLoading={isLoading}
+            isLoading={isMutating}
           />
-          <View>
-            <Text className="text-neutral-500 text-center text-lg mt-3">
-              Don't have an account?{" "}
-              <Link href="/sign-up" className="text-orange-500">
-                Sign up
-              </Link>
-            </Text>
-          </View>
+
+          <AuthDecide
+            ask="Don't have an account?"
+            title="Sign-up"
+            href="/sign-up"
+          />
         </View>
       </ScrollView>
       <StatusBar style="auto" />
