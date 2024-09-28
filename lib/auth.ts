@@ -16,7 +16,7 @@ export const signUp = async (
 
     const data = await response.json();
 
-    if (data.message) {
+    if (data.error) {
       throw new Error(data.message);
     }
 
@@ -45,7 +45,7 @@ export const login = async (
 
     const data = await response.json();
 
-    if (data.message) {
+    if (data.error) {
       throw new Error(data.message);
     }
 
@@ -73,7 +73,7 @@ export const logout = async (url: string | URL | Request) => {
 
     const data = await response.json();
 
-    if (data.message) {
+    if (data.error) {
       throw new Error(data.message);
     }
 
