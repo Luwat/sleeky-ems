@@ -97,21 +97,3 @@ export const deleteEmployee = async (url: string | URL | Request ) => {
   console.log(data);
   return data;
 };
-
-export const logout = async (url: string | URL | Request) => {
-  const accessToken = await AsyncStorage.removeItem("accessToken");
-const response = await fetch(url, {
-  method: "GET",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-  },
-});
-
-if (!response.ok) {
-  console.log("Failed to get employees");
-}
-
-const data = await response.json();
-return data;
-};

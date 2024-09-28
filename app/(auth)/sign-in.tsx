@@ -4,20 +4,18 @@ import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Redirect, router } from "expo-router";
+import { router } from "expo-router";
 import { BASE_URL } from "@/lib/config";
 import Error from "@/components/Error";
 import AuthDecide from "@/components/auth/AuthDecide";
 import useSWRMutation from "swr/mutation";
-import { signUp } from "@/lib/auth";
+import { login } from "@/lib/auth";
 
 const SignIn = () => {
-  const {
-    data,
-    trigger,
-    isMutating,
-    error,
-  } = useSWRMutation(`${BASE_URL}/auth/login`, signUp);
+  const { data, trigger, isMutating, error } = useSWRMutation(
+    `${BASE_URL}/auth/login`,
+    login
+  );
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -35,17 +33,7 @@ const SignIn = () => {
       result;
       router.replace("/employees");
     }
-
-    if (error) {
-      error;
-      return
-    }
   };
-
-  // if (isLoggedIn && !isLoading) {
-  //   console.log(accessToken.get)
-  //   return <Redirect href={'/employees'}/>
-  // }
 
   return (
     <SafeAreaView className="h-full bg-neutral-900">
@@ -56,7 +44,7 @@ const SignIn = () => {
               Log in to view employees data
             </Text>
           </View>
-          {error && <Error error={error} />}
+          {error && <Error error={error.message} />}
           <FormField
             title="Email"
             placeholder="Enter email"

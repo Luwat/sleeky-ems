@@ -38,7 +38,7 @@ const SignUp = () => {
     }
 
     if (error) {
-      return null;
+      alert(error.message);
     }
   };
 
@@ -51,7 +51,7 @@ const SignUp = () => {
               Join Sleeky Programmers
             </Text>
           </View>
-          {error && <Error error={error} />}
+          {error && <Error error={error.message} />}
           <FormField
             title="Email"
             placeholder="Enter email"
