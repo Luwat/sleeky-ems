@@ -21,6 +21,7 @@ export const signUp = async (
     }
 
     await AsyncStorage.setItem("accessToken", data.accessToken);
+
     return data;
   } catch (error: any) {
     if (error.message === "Unauthorized") {
@@ -50,6 +51,7 @@ export const login = async (
     }
 
     await AsyncStorage.setItem("accessToken", data.accessToken);
+    
     return data;
   } catch (error: any) {
     if (error.message === "Unauthorized") {
@@ -60,25 +62,15 @@ export const login = async (
   }
 };
 
-export const logout = async (url: string | URL | Request) => {
-  try {
-    const accessToken = await AsyncStorage.removeItem("accessToken");
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    const data = await response.json();
-
-    if (data.error) {
-      throw new Error(data.message);
-    }
-
-    return data;
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
+export const logout = async (
+  url: string | URL | Request,
+  { arg }: { arg: string }
+) => {
+  const accessToken = await AsyncStorage.removeItem(arg);
+  await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 };

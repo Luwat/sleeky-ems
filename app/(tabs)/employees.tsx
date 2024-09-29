@@ -4,23 +4,33 @@ import NoEmployee from "@/components/employees/NoEmployee";
 import Error from "@/components/Error";
 import { BASE_URL } from "@/lib/config";
 import { EmployeesData } from "@/lib/definitions";
+import { useToken } from "@/lib/hooks";
 import { fetchEmployees } from "@/lib/http";
+import { Redirect, router } from "expo-router";
 import { FlatList, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useSWR from "swr";
 
 
 const EmployeesPage = () => {
+  const { token } = useToken()
+
+  if (token === undefined) {
+    return <Redirect href="/" />
+  }
+  
   const {
     data: employees,
     error,
-    isLoading
+    isLoading,
   } = useSWR(`${BASE_URL}/employees`, fetchEmployees);
+  
+
 
   return (
-    <SafeAreaView className="h-full w-full bg-neutral-950 p-4">
+    <SafeAreaView className="h-full w-full bg-neutral-900 p-4">
       {isLoading && <Text className="text-neutral-100">Loading...</Text>}
-      {error && <Error error={error} />}
+      {error && <Error error={error.message} />}
       {employees && (
         <FlatList
           data={employees}

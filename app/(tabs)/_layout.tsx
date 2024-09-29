@@ -1,24 +1,28 @@
-import { StyleSheet, Text, View } from "react-native";
-import { Tabs } from "expo-router";
+import { Button, StyleSheet, Text, View } from "react-native";
+import { router, Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import LogoutButton from "@/components/employees/LogoutButton";
 
 const Layout = () => {
   return (
-    <>
-      <Tabs screenOptions={{
-        tabBarStyle: {
-          height: 70,
-          backgroundColor: "#161616",
-        },
-        tabBarActiveBackgroundColor: "#161616",
-        tabBarActiveTintColor: "#fafafa",
-        tabBarLabelStyle: {
-          fontSize: 16,
-          paddingBottom: 5
-        },
-        tabBarInactiveTintColor: "grey",
-        
-      }}>
+      <Tabs
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "#161616",
+          },
+          tabBarStyle: {
+            height: 70,
+            backgroundColor: "#161616",
+          },
+          tabBarActiveBackgroundColor: "#161616",
+          tabBarActiveTintColor: "#fafafa",
+          tabBarLabelStyle: {
+            fontSize: 16,
+            paddingBottom: 5,
+          },
+          tabBarInactiveTintColor: "grey",
+        }}
+      >
         <Tabs.Screen
           name="employees"
           options={{
@@ -30,7 +34,7 @@ const Layout = () => {
                 size={32}
                 color={focused ? "#fafafa" : "gray"}
               />
-            )
+            ),
           }}
         />
         <Tabs.Screen
@@ -48,7 +52,6 @@ const Layout = () => {
           }}
         />
       </Tabs>
-    </>
   );
 };
 

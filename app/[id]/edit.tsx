@@ -16,7 +16,7 @@ const Edit = () => {
   } = useSWR(`${BASE_URL}/employees/${id}`, fetchEmployee);
   return (
     <SafeAreaView className="bg-neutral-900 pb-20">
-      {error && <Error error={error} />}
+      {error && <Error error={error.message} />}
       {isLoading ? (
         <Text className="text-neutral-100">Loading...</Text>
       ) : (

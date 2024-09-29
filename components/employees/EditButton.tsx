@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text } from "react-native";
+import { Text, Pressable } from "react-native";
 
 const EditButton = ({
   title,
@@ -12,14 +12,13 @@ const EditButton = ({
   isLoading?: boolean;
 }) => {
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
+    <Pressable
       onPress={handlePress}
       disabled={isLoading}
       className={`justify-center items-center ${isLoading ? 'bg-neutral-500': 'bg-neutral-100' } py-4  rounded-2xl ${containerStyles}`}
     >
       <Text className="text-blue-950 text-2xl">{title}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

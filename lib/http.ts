@@ -2,35 +2,42 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { EmployeesData } from "./definitions";
 import { formSchema } from "./config";
 
+const getToken = async () => await AsyncStorage.getItem("accessToken");
+// const removeToken = async () => await AsyncStorage.removeItem("accessToken");
+
 export const fetchEmployees = async (url: string | URL | Request) => {
-    const accessToken = await AsyncStorage.getItem("accessToken");
   const response = await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${await getToken()}`,
     },
   });
-
-  if (!response.ok) {
-    console.log("Failed to get employees");
-  }
 
   const data = await response.json();
   return data;
 };
 
 export const fetchEmployee = async (url: string | URL | Request) => {
-  const value = await AsyncStorage.getItem("accessToken");
-  const response = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${value}`,
-    },
-  });
-  const data = await response.json();
-  return data;
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await getToken()}`,
+      },
+    });
+    
+    const data = await response.json();
+
+    if (data.error) {
+      throw new Error(data.message)
+    }
+
+    return data;
+  } catch(error:any) {
+    throw new Error(error.message)
+  }
 };
 
 export const createEmployees = async (
@@ -38,17 +45,21 @@ export const createEmployees = async (
   { arg }: { arg: EmployeesData }
 ) => {
   const parsedFormData = formSchema.parse(arg);
-  const value = await AsyncStorage.getItem("accessToken");
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${value}`,
+      Authorization: `Bearer ${await getToken()}`,
     },
     body: JSON.stringify(parsedFormData),
   });
 
   const data = await response.json();
+
+  if (data.error) {
+    throw new Error(data.message)
+  }
+
   return data;
 };
 
@@ -57,43 +68,42 @@ export const updateEmployee = async (
   { arg }: { arg: EmployeesData }
 ) => {
   const parsedFormData = formSchema.parse(arg);
-  const value = await AsyncStorage.getItem("accessToken");
   const response = await fetch(url, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${value}`,
+      Authorization: `Bearer ${await getToken()}`,
     },
     body: JSON.stringify(parsedFormData),
   });
 
   const data = await response.json();
 
-  if (data.message) {
-    console.log(data.message);
-    return;
+  if (data.error) {
+    throw new Error(data.message)
   }
 
   return data;
 };
 
 export const deleteEmployee = async (url: string | URL | Request ) => {
-  const value = await AsyncStorage.getItem("accessToken");
-  const response = await fetch(url, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${value}`,
-    },
-  });
-
-  const data = await response.json();
-
-  if (data.message) {
-    console.log(data.message);
-    return;
+  try {
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await getToken()}`,
+      },
+    });
+  
+    const data = await response.json();
+  
+    if (data.error) {
+      throw new Error(data.message)
+    }
+  
+    return data;
+  } catch(error:any) {
+    throw new Error(error.message)
   }
-
-  console.log(data);
-  return data;
 };
