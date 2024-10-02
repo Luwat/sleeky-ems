@@ -21,3 +21,23 @@ export const useToken = () => {
     token
   }
 }
+
+export const useRefresh = (data: any, mutate: any) => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      mutate()
+      data
+      console.log(data)
+      setIsRefreshing(false)
+    }, 5000);
+  }
+
+  return {
+    onRefresh,
+    isRefreshing
+  }
+
+}

@@ -4,29 +4,30 @@ import NoEmployee from "@/components/employees/NoEmployee";
 import Error from "@/components/Error";
 import { BASE_URL } from "@/lib/config";
 import { EmployeesData } from "@/lib/definitions";
-import { useToken } from "@/lib/hooks";
+import { useRefresh, useToken } from "@/lib/hooks";
 import { fetchEmployees } from "@/lib/http";
-import { Redirect, router } from "expo-router";
-import { FlatList, Text } from "react-native";
+import { Redirect } from "expo-router";
+import { FlatList, RefreshControl, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 
 
 const EmployeesPage = () => {
-  const { token } = useToken()
-
-  if (token === undefined) {
-    return <Redirect href="/" />
-  }
-  
   const {
     data: employees,
     error,
     isLoading,
+    mutate
   } = useSWR(`${BASE_URL}/employees`, fetchEmployees);
   
+  const { token } = useToken()
+  
+  if (token === undefined) {
+    return <Redirect href="/" />
+  }
 
-
+  const {isRefreshing, onRefresh} = useRefresh(employees, mutate)
+  
   return (
     <SafeAreaView className="h-full w-full bg-neutral-900 p-4">
       {isLoading && <Text className="text-neutral-100">Loading...</Text>}
@@ -45,6 +46,10 @@ const EmployeesPage = () => {
           )}
           ListHeaderComponent={() => <EmployeesListHeader />}
           ListEmptyComponent={() => <NoEmployee />}
+          refreshing={isRefreshing}
+          onRefresh={() => {
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh}/>
+          }}
         />
       )}
     </SafeAreaView>
